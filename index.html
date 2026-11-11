@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>社宅招租</title>
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--ink:#000;--sub:#8e8e93;--line:#e5e5ea;--blue:#007aff;--red:#ff3b30;--green:#34c759;--fill:#e9e9ee;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--ink:#fff;--sub:#98989f;--line:#38383a;--blue:#0a84ff;--red:#ff453a;--green:#30d158;--fill:#2c2c2e}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"SF Pro Text","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:auto;padding:0 16px 60px}
+.bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);padding:10px 0 8px}
+h1{font-size:34px;font-weight:800;letter-spacing:-.5px;margin:18px 0 2px}
+.sub{color:var(--sub);font-size:14px;margin-bottom:6px}
+.search{display:flex;align-items:center;gap:8px;background:var(--fill);border-radius:12px;padding:0 12px;height:38px}
+.search input{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-size:17px;outline:0}
+.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;margin-top:10px}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-size:14px;font-weight:500;padding:6px 0;border-radius:7px;cursor:pointer;transition:.2s}
+.seg button.on{background:var(--card);box-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.04);font-weight:600}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:0;background:var(--fill);color:var(--ink);font:inherit;font-size:14px;padding:7px 14px;border-radius:99px;cursor:pointer;transition:.2s}
+.chip.on{background:var(--blue);color:#fff}
+.tools{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 8px;font-size:13px;color:var(--sub)}
+.tools label{display:flex;align-items:center;gap:6px}
+.sw{appearance:none;width:42px;height:26px;border-radius:99px;background:var(--fill);position:relative;transition:.25s;cursor:pointer;margin:0}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3);transition:.25s}
+.sw:checked{background:var(--green)}.sw:checked::after{left:18px}
+.card{background:var(--card);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);animation:up .45s both;transition:transform .15s}
+.card:active{transform:scale(.985)}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.city{font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.5px}
+h3{margin:2px 0 0;font-size:20px;font-weight:700;letter-spacing:-.2px}
+.addr{color:var(--sub);font-size:13px;margin-top:3px}
+.badge{flex:none;text-align:center;border-radius:14px;padding:6px 10px;background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red);min-width:62px}
+.badge b{display:block;font-size:22px;line-height:1.1;font-weight:800}
+.badge span{font-size:11px;font-weight:600}
+.badge.ok{background:color-mix(in srgb,var(--blue) 12%,transparent);color:var(--blue)}
+.badge.off{background:var(--fill);color:var(--sub)}
+.deadline{margin-top:12px;font-size:15px;font-weight:700;color:var(--red);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.25;transform:scale(1.5)}}
+.deadline.off{color:var(--sub)}.deadline.off .dot{background:var(--sub);animation:none}
+.price{margin-top:10px;font-size:15px}.price b{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;padding:3px 10px;border-radius:99px;background:var(--fill)}
+.info{margin-top:10px;font-size:13px;color:var(--sub);line-height:1.7}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;border-radius:12px;overflow:hidden;background:var(--bg)}
+td,th{padding:7px 10px;text-align:left}th{color:var(--sub);font-weight:500;font-size:12px}
+td+td,th+th{text-align:right}tr+tr td{border-top:1px solid var(--line)}
+.btns{margin-top:14px;display:flex;gap:10px}
+.btn{flex:1;text-align:center;text-decoration:none;font-size:16px;font-weight:600;padding:12px;border-radius:14px;background:var(--blue);color:#fff;transition:.15s}
+.btn:active{opacity:.6;transform:scale(.97)}
+.btn.alt{flex:none;background:var(--fill);color:var(--blue);padding:12px 16px}
+.empty{text-align:center;color:var(--sub);padding:60px 0}
+.note{font-size:12px;color:var(--sub);text-align:center;margin-top:20px;line-height:1.6}
+details{background:var(--card);border-radius:16px;padding:12px 16px;margin-top:8px}
+summary{color:var(--blue);cursor:pointer;font-size:15px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.form input,.form select{border:0;background:var(--fill);color:var(--ink);font:inherit;font-size:15px;padding:10px;border-radius:10px;min-width:0}
+.form button{grid-column:1/-1;border:0;background:var(--blue);color:#fff;font:inherit;font-weight:600;padding:11px;border-radius:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>社宅招租</h1>
+  <div class="sub">台北市・新北市 政府辦理　<span id="today"></span></div>
+  <div class="bar">
+    <div class="search"><span>🔍</span><input id="q" placeholder="搜尋社宅、行政區、房型" type="search"></div>
+    <div class="seg" id="seg"></div>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="tools"><span id="count"></span><label>顯示已截止 <input type="checkbox" class="sw" id="showClosed"></label></div>
+  <div id="list"></div>
+  <details><summary>＋ 新增一筆招租</summary>
+    <form class="form" id="addForm">
+      <input name="name" placeholder="社宅名稱*" required style="grid-column:1/-1">
+      <select name="city"><option>台北市</option><option>新北市</option></select>
+      <input name="dist" placeholder="行政區">
+      <input name="rooms" placeholder="房型 一房,二房">
+      <input name="minRent" type="number" placeholder="最低月租">
+      <input name="units" type="number" placeholder="戶數">
+      <input name="end" type="date" required>
+      <input name="url" placeholder="官方公告網址" style="grid-column:1/-1">
+      <button>加入</button>
+    </form>
+  </details>
+  <div class="note">資料整理自官方公告與媒體彙整（2026/11），租金為定價，<br>實際以官方公告為準。狀態依今天日期自動更新。</div>
+</div>
+
+<script>
+// 內建資料：新的招租加在這裡，或用頁面下方「新增」表單
+const BASE=[
+{name:"興隆社會住宅 I 區",city:"台北市",dist:"文山區",addr:"興隆路四段107巷",rooms:["一房","二房","三房"],units:471,minRent:15824,
+ start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",draw:"11/27 公開抽籤・2027/3 後分批入住",operator:"臺北市住都中心",
+ rent:[["一房 16~18坪","15,824~17,760"],["二房 26~31坪","25,722~30,612"],["三房 34坪","33,684"]],
+ url:"https://uni-one.thurc.org.taipei/",src:"https://applealmondrealty.com/posts/54640"},
+{name:"福國社會住宅",city:"台北市",dist:"北投區",addr:"福國路168、170號・近捷運芝山站",rooms:["一房","二房","三房"],units:341,minRent:18118,
+ start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",draw:"11/27 公開抽籤・2027/3 後分批入住",operator:"臺北市住都中心",
+ rent:[["一房 19~20坪","18,118~19,037"],["二房 28~33坪","26,608~31,422"],["三房 37坪","35,217"]],
+ url:"https://uni-one.thurc.org.taipei/",src:"https://applealmondrealty.com/posts/54640"},
+{name:"錦州社會住宅",city:"台北市",dist:"中山區",addr:"新生北路二段98、102號",rooms:["一房","二房"],units:342,minRent:16820,
+ start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",draw:"11/27 公開抽籤・2027/4 後分批入住",operator:"臺北市住都中心",
+ rent:[["一房 16~18坪","16,820~18,841"],["二房 27~29坪","28,393~30,435"]],
+ url:"https://uni-one.thurc.org.taipei/",src:"https://applealmondrealty.com/posts/54640"},
+{name:"林口世大運選手村社宅",city:"新北市",dist:"林口區",addr:"仁愛路二段・近機捷 A9 林口站（A/B/D 區）",rooms:["三房","四房"],units:null,minRent:13040,
+ start:"2026-07-30",end:"2026-12-31",endText:"12/31（四）截止・隨到隨辦",draw:"審查通過後選屋簽約・洽 02-8979-1799",operator:"國家住都中心（中央社宅）",
+ rent:[["A區四房 50~57坪","14,550~33,000"],["B區三房 45坪","13,090~26,360"],["D區三房 45~48坪","13,040~27,600"]],
+ url:"https://pms.hurc.org.tw/",src:"https://applealmondrealty.com/posts/54649"}
+];
+const $=id=>document.getElementById(id);
+const store=()=>{try{return JSON.parse(localStorage.getItem("extra")||"[]")}catch(e){return[]}};
+const save=a=>{try{localStorage.setItem("extra",JSON.stringify(a))}catch(e){}};
+const pad=n=>String(n).padStart(2,"0"),now=new Date();
+const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+$("today").textContent=todayStr.slice(5).replace("-","/");
+const dayDiff=s=>Math.round((new Date(s+"T00:00:00")-new Date(todayStr+"T00:00:00"))/864e5);
+let city="",dist="",room="";
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const all=()=>BASE.concat(store());
+function seg(){["全部","台北市","新北市"].forEach((c,i)=>{const b=document.createElement("button");b.textContent=c;if(!i)b.className="on";
+  b.onclick=()=>{city=i?c:"";dist="";[...$("seg").children].forEach(x=>x.classList.toggle("on",x===b));chips();render()};$("seg").appendChild(b)})}
+function chips(){const c=$("chips");c.innerHTML="";
+  const mk=(t,on,f)=>{const b=document.createElement("button");b.className="chip"+(on?" on":"");b.textContent=t;b.onclick=f;c.appendChild(b)};
+  [...new Set(all().filter(x=>!city||x.city===city).map(x=>x.dist).filter(Boolean))].forEach(d=>mk(d,dist===d,()=>{dist=dist===d?"":d;chips();render()}));
+  ["一房","二房","三房","四房"].forEach(r=>mk(r,room===r,()=>{room=room===r?"":r;chips();render()}))}
+$("q").oninput=render;$("showClosed").onchange=render;
+$("addForm").onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const x=store();
+  x.push({name:f.name,city:f.city,dist:f.dist,rooms:f.rooms.split(/[,，、 ]+/).filter(Boolean),units:+f.units||null,minRent:+f.minRent||0,
+  end:f.end,endText:f.end.slice(5).replace("-","/")+" 截止",url:f.url,rent:[],custom:true});save(x);e.target.reset();chips();render()};
+window.del=i=>{const x=store();x.splice(i,1);save(x);chips();render();return false};
+function render(){
+  const q=$("q").value.trim().toLowerCase(),ex=store();
+  let r=all().map(d=>({...d,left:dayDiff(d.end),ex:d.custom?ex.findIndex(e=>e.name===d.name&&e.end===d.end):-1}))
+    .map(d=>({...d,open:(!d.start||d.start<=todayStr)&&d.left>=0}))
+    .filter(d=>(!city||d.city===city)&&(!dist||d.dist===dist)&&(!room||d.rooms.includes(room))&&($("showClosed").checked||d.open)&&
+      (!q||(d.name+d.city+d.dist+d.addr+d.rooms.join()).toLowerCase().includes(q)))
+    .sort((a,b)=>a.end.localeCompare(b.end));
+  $("count").textContent=`${r.length} 處受理中`.replace("受理中",$("showClosed").checked?"符合":"受理中");
+  $("list").innerHTML=r.length?r.map((d,i)=>{
+    const badge=!d.open?`<div class="badge off"><b>—</b><span>已截止</span></div>`:
+      d.left<=7?`<div class="badge"><b>${d.left||"今"}</b><span>${d.left?"天後截止":"天截止！"}</span></div>`:
+      `<div class="badge ok"><b>${d.left}</b><span>天後截止</span></div>`;
+    return `<div class="card" style="animation-delay:${i*70}ms"><div class="top"><div><div class="city">${d.city}${d.dist?" · "+esc(d.dist):""}</div>
+    <h3>${esc(d.name)}</h3>${d.addr?`<div class="addr">${esc(d.addr)}</div>`:""}</div>${badge}</div>
+    <div class="deadline ${d.open?"":"off"}"><i class="dot"></i>${d.open?"截止：":"已截止："}${esc(d.endText)}</div>
+    ${d.minRent?`<div class="price"><b>${d.minRent.toLocaleString()}</b> 元／月起</div>`:""}
+    <div class="tags">${d.rooms.map(x=>`<span class="tag">${esc(x)}</span>`).join("")}${d.units?`<span class="tag">${d.units} 戶</span>`:""}</div>
+    ${d.rent&&d.rent.length?`<table><tr><th>房型</th><th>月租（元）</th></tr>${d.rent.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join("")}</table>`:""}
+    <div class="info">${d.draw?esc(d.draw)+"<br>":""}${d.operator?"受理單位："+esc(d.operator):""}</div>
+    <div class="btns">${d.url?`<a class="btn" href="${esc(d.url)}" target="_blank" rel="noopener">線上申請</a>`:""}
+    ${d.src?`<a class="btn alt" href="${esc(d.src)}" target="_blank" rel="noopener">來源</a>`:""}
+    ${d.ex>=0?`<a class="btn alt" href="#" onclick="return del(${d.ex})">刪除</a>`:""}</div></div>`}).join(""):'<div class="empty">目前沒有符合的招租</div>';
+}
+seg();chips();render();
+</script>
+</body>
+</html>
