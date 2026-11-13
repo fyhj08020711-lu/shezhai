@@ -81,13 +81,20 @@ summary{color:var(--blue);cursor:pointer;font-size:15px}
 .tab em{position:absolute;top:-3px;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-style:normal;font-size:11px;font-weight:700;line-height:18px;padding:0 5px}
 .tab em.z{display:none}
 .home{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:var(--ink);opacity:.9}
-@media(max-width:600px){
-  body{display:block}
-  .phone{width:100%;height:100%;max-height:none;border-radius:0;box-shadow:none}
-  .island,.status,.home{display:none}
-  .tabbar{padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
-  .screen{padding-top:12px}
-}
+/* 不做手機外框：整頁鋪滿，只保留 iPhone 的視覺風格 */
+body{display:block}
+.phone{width:100%;height:100%;max-height:none;border-radius:0;box-shadow:none}
+.island,.status,.home{display:none}
+.screen{padding-top:12px}
+.screen>*{max-width:860px;margin-left:auto;margin-right:auto}
+.bar{margin:0 auto;padding-left:0;padding-right:0}
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,370px),1fr));gap:14px;align-items:start}
+#list .card,#list .empty{margin-bottom:0}
+#list .empty{grid-column:1/-1}
+.tabbar{padding:7px 0 max(8px,env(safe-area-inset-bottom,0px));justify-content:center}
+.tab{flex:0 1 200px}
+.tab svg{width:24px;height:24px}
+.tab{font-size:11px}
 </style>
 </head>
 <body>
