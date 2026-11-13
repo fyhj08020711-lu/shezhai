@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>社宅招租</title>
 <style>
-:root{--bg:#f2f2f7;--card:#fff;--ink:#000;--sub:#8e8e93;--line:#e5e5ea;--blue:#007aff;--red:#ff3b30;--green:#34c759;--fill:#e9e9ee;color-scheme:light dark}
-@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--ink:#fff;--sub:#98989f;--line:#38383a;--blue:#0a84ff;--red:#ff453a;--green:#30d158;--fill:#2c2c2e}}
+:root{--bg:#f2f2f7;--card:#fff;--ink:#000;--sub:#8e8e93;--line:#e5e5ea;--blue:#007aff;--red:#ff3b30;--green:#34c759;--amber:#ff9500;--fill:#e9e9ee;color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--ink:#fff;--sub:#98989f;--line:#38383a;--blue:#0a84ff;--red:#ff453a;--green:#30d158;--amber:#ff9f0a;--fill:#2c2c2e}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"SF Pro Text","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 .wrap{max-width:720px;margin:auto;padding:0 16px 60px}
@@ -38,6 +38,9 @@ h3{margin:2px 0 0;font-size:20px;font-weight:700;letter-spacing:-.2px}
 .badge b{display:block;font-size:22px;line-height:1.1;font-weight:800}
 .badge span{font-size:11px;font-weight:600}
 .badge.ok{background:color-mix(in srgb,var(--blue) 12%,transparent);color:var(--blue)}
+.badge.soon{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber)}
+.deadline.soon{color:var(--amber)}.deadline.soon .dot{background:var(--amber)}
+.card.upcoming{outline:2px dashed color-mix(in srgb,var(--amber) 55%,transparent);outline-offset:-2px}
 .badge.off{background:var(--fill);color:var(--sub)}
 .deadline{margin-top:12px;font-size:15px;font-weight:700;color:var(--red);display:flex;align-items:center;gap:6px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
@@ -82,7 +85,8 @@ summary{color:var(--blue);cursor:pointer;font-size:15px}
       <input name="rooms" placeholder="房型 一房,二房">
       <input name="minRent" type="number" placeholder="最低月租">
       <input name="units" type="number" placeholder="戶數">
-      <input name="end" type="date" required>
+      <label style="font-size:12px;color:var(--sub)">開放日（選填，未來日期＝即將開放）<input name="start" type="date" style="width:100%"></label>
+      <label style="font-size:12px;color:var(--sub)">截止日<input name="end" type="date" required style="width:100%"></label>
       <input name="url" placeholder="官方公告網址" style="grid-column:1/-1">
       <button>加入</button>
     </form>
@@ -109,6 +113,12 @@ const BASE=[
  start:"2026-07-30",end:"2026-12-31",endText:"12/31（四）截止・隨到隨辦",draw:"審查通過後選屋簽約・洽 02-8979-1799",operator:"國家住都中心（中央社宅）",
  rent:[["A區四房 50~57坪","14,550~33,000"],["B區三房 45坪","13,090~26,360"],["D區三房 45~48坪","13,040~27,600"]],
  url:"https://pms.hurc.org.tw/",src:"https://applealmondrealty.com/posts/54649"}
+,
+{name:"斯文、新興社宅 短租（4 戶）",city:"台北市",dist:"",addr:"限設籍台北市、年滿 18 歲・僅受理掛號郵寄",rooms:[],units:4,minRent:0,
+ start:"2026-01-01",end:"2026-12-31",endText:"12/31（四）23:59 截止",draw:"短期租賃",operator:"臺北市住都中心",
+ rent:[],url:"https://www.rent.gov.taipei/"}
+// 即將開放的案子：start 設成未來日期（YYYY-MM-DD），頁面會自動標成「即將開放」，到期後自動變成「受理中」
+// 例：{name:"某某社宅",city:"新北市",dist:"板橋區",rooms:["一房"],start:"2027-01-15",end:"2027-02-14",endText:"2/14 截止",url:"..."}
 ];
 const $=id=>document.getElementById(id);
 const store=()=>{try{return JSON.parse(localStorage.getItem("extra")||"[]")}catch(e){return[]}};
@@ -129,23 +139,28 @@ function chips(){const c=$("chips");c.innerHTML="";
 $("q").oninput=render;$("showClosed").onchange=render;
 $("addForm").onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const x=store();
   x.push({name:f.name,city:f.city,dist:f.dist,rooms:f.rooms.split(/[,，、 ]+/).filter(Boolean),units:+f.units||null,minRent:+f.minRent||0,
-  end:f.end,endText:f.end.slice(5).replace("-","/")+" 截止",url:f.url,rent:[],custom:true});save(x);e.target.reset();chips();render()};
+  start:f.start||undefined,end:f.end,endText:f.end.slice(5).replace("-","/")+" 截止",url:f.url,rent:[],custom:true});save(x);e.target.reset();chips();render()};
 window.del=i=>{const x=store();x.splice(i,1);save(x);chips();render();return false};
 function render(){
   const q=$("q").value.trim().toLowerCase(),ex=store();
   let r=all().map(d=>({...d,left:dayDiff(d.end),ex:d.custom?ex.findIndex(e=>e.name===d.name&&e.end===d.end):-1}))
-    .map(d=>({...d,open:(!d.start||d.start<=todayStr)&&d.left>=0}))
-    .filter(d=>(!city||d.city===city)&&(!dist||d.dist===dist)&&(!room||d.rooms.includes(room))&&($("showClosed").checked||d.open)&&
+    .map(d=>({...d,soon:!!d.start&&d.start>todayStr,startLeft:d.start?dayDiff(d.start):0}))
+    .map(d=>({...d,open:!d.soon&&d.left>=0}))
+    .filter(d=>(!city||d.city===city)&&(!dist||d.dist===dist)&&(!room||d.rooms.includes(room))&&($("showClosed").checked||d.open||d.soon)&&
       (!q||(d.name+d.city+d.dist+d.addr+d.rooms.join()).toLowerCase().includes(q)))
-    .sort((a,b)=>a.end.localeCompare(b.end));
-  $("count").textContent=`${r.length} 處受理中`.replace("受理中",$("showClosed").checked?"符合":"受理中");
+    .sort((a,b)=>(a.soon-b.soon)||(a.soon?a.start.localeCompare(b.start):a.end.localeCompare(b.end)));
+  const nOpen=r.filter(d=>d.open).length,nSoon=r.filter(d=>d.soon).length;
+  $("count").textContent=`${nOpen} 處受理中`+(nSoon?`・${nSoon} 處即將開放`:"")+(r.length-nOpen-nSoon?`・${r.length-nOpen-nSoon} 處已截止`:"");
   $("list").innerHTML=r.length?r.map((d,i)=>{
-    const badge=!d.open?`<div class="badge off"><b>—</b><span>已截止</span></div>`:
+    const sd=d.start?d.start.slice(5).replace("-","/"):"";
+    const badge=d.soon?`<div class="badge soon"><b>${d.startLeft}</b><span>天後開放</span></div>`:
+      !d.open?`<div class="badge off"><b>—</b><span>已截止</span></div>`:
       d.left<=7?`<div class="badge"><b>${d.left||"今"}</b><span>${d.left?"天後截止":"天截止！"}</span></div>`:
       `<div class="badge ok"><b>${d.left}</b><span>天後截止</span></div>`;
-    return `<div class="card" style="animation-delay:${i*70}ms"><div class="top"><div><div class="city">${d.city}${d.dist?" · "+esc(d.dist):""}</div>
+    return `<div class="card${d.soon?" upcoming":""}" style="animation-delay:${i*70}ms"><div class="top"><div><div class="city">${d.city}${d.dist?" · "+esc(d.dist):""}</div>
     <h3>${esc(d.name)}</h3>${d.addr?`<div class="addr">${esc(d.addr)}</div>`:""}</div>${badge}</div>
-    <div class="deadline ${d.open?"":"off"}"><i class="dot"></i>${d.open?"截止：":"已截止："}${esc(d.endText)}</div>
+    ${d.soon?`<div class="deadline soon"><i class="dot"></i>即將開放：${sd} 起受理・${esc(d.endText)}</div>`:
+    `<div class="deadline ${d.open?"":"off"}"><i class="dot"></i>${d.open?"截止：":"已截止："}${esc(d.endText)}</div>`}
     ${d.minRent?`<div class="price"><b>${d.minRent.toLocaleString()}</b> 元／月起</div>`:""}
     <div class="tags">${d.rooms.map(x=>`<span class="tag">${esc(x)}</span>`).join("")}${d.units?`<span class="tag">${d.units} 戶</span>`:""}</div>
     ${d.rent&&d.rent.length?`<table><tr><th>房型</th><th>月租（元）</th></tr>${d.rent.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join("")}</table>`:""}
