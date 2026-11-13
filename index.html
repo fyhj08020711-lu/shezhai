@@ -219,8 +219,8 @@ function render(){
     return `<div class="card${d.soon?" upcoming":""}" style="animation-delay:${i*70}ms"><div class="top"><div><div class="city">${d.city}${d.dist?" · "+esc(d.dist):""}</div>
     <h3>${esc(d.name)}</h3>${d.addr?`<div class="addr">${esc(d.addr)}</div>`:""}</div>${badge}</div>
     ${d.soon?`<div class="deadline soon"><i class="dot"></i>即將開放：${sd} 起受理・${esc(d.endText)}</div>`:
-    `<div class="deadline ${d.open?"":"off"}"><i class="dot"></i>${d.open?"截止：":"已截止："}${esc(d.endText)}</div>`}
-    ${d.drawText?`<div class="draw"><span>🎲 抽籤</span>${esc(d.drawText)}${d.drawDate&&dayDiff(d.drawDate)>=0?`<small>${dayDiff(d.drawDate)?dayDiff(d.drawDate)+" 天後":"今天"}</small>`:""}</div>`:""}
+    `<div class="deadline ${d.open?"":"off"}"><i class="dot"></i>${d.open?"截止："+esc(d.endText):"已截止（"+esc(d.endText.replace(/\s*截止/,""))+"）"}</div>`}
+    ${d.drawText?`<div class="draw"><span>🎲 抽籤時間</span>${esc(d.drawText)}${d.drawDate&&dayDiff(d.drawDate)>=0?`<small>${dayDiff(d.drawDate)?dayDiff(d.drawDate)+" 天後":"今天"}</small>`:""}</div>`:""}
     ${d.minRent?`<div class="price"><b>${d.minRent.toLocaleString()}</b> 元／月起</div>`:""}
     <div class="tags">${d.rooms.map(x=>`<span class="tag">${esc(x)}</span>`).join("")}${d.units?`<span class="tag">${d.units} 戶</span>`:""}</div>
     ${d.rent&&d.rent.length?`<table><tr><th>房型</th><th>月租（元）</th></tr>${d.rent.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join("")}</table>`:""}
