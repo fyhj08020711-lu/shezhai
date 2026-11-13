@@ -1,43 +1,53 @@
 @echo off
-chcp 65001 >nul
-title 社宅招租 一鍵更新
-rem 把這個資料夾的修改上傳到 GitHub（fyhj08020711-lu/shezhai）。
+title Shezhai Update
 cd /d "%~dp0" || goto fail
 
 echo.
-echo [1/3] 整理這台電腦上的修改...
+echo [1/3] Saving local changes...
 git add -A
 git diff --cached --quiet
 if errorlevel 1 (
-  git commit -q -m "更新 %date% %time:~0,8%"
-  echo       有修改，已記錄。
+  git commit -q -m "update %date% %time:~0,8%"
+  echo       Changes committed.
 ) else (
-  echo       沒有新的修改。
+  echo       No new changes.
 )
 
-echo [2/3] 和 GitHub 同步...
+echo [2/3] Syncing with GitHub...
+git ls-remote --exit-code origin >nul 2>&1
+if errorlevel 1 goto norepo
+git ls-remote --exit-code --heads origin main >nul 2>&1
+if errorlevel 1 goto push
 git pull --rebase -q origin main
 if errorlevel 1 goto conflict
 
-echo [3/3] 上傳到 GitHub...
+:push
+echo [3/3] Uploading to GitHub...
 git push -q -u origin main
 if errorlevel 1 goto fail
 
 echo.
-echo 完成！約 1 分鐘後網站會更新：
+echo Done! The site updates in about 1 minute:
 echo     https://fyhj08020711-lu.github.io/shezhai/
+goto end
+
+:norepo
+echo.
+echo GitHub repo not found: https://github.com/fyhj08020711-lu/shezhai
+echo Create it first (Public, no README), then run this again.
+echo If you are not logged in to GitHub on this PC, log in when asked.
 goto end
 
 :conflict
 git rebase --abort >nul 2>&1
 echo.
-echo 同步失敗：GitHub 上和這台電腦改到了同一個地方，或是連不上網路。
-echo 這台電腦的修改都還在，請把這個視窗的畫面截圖給 Claude 處理。
+echo Sync failed. Your local changes are safe.
+echo Take a screenshot of this window and send it to Claude.
 goto end
 
 :fail
 echo.
-echo 上傳失敗，請確認網路和 GitHub 登入，再把畫面截圖給 Claude。
+echo Upload failed. Check network and GitHub login, then screenshot this window.
 
 :end
 echo.
