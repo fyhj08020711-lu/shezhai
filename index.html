@@ -5,16 +5,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>社宅招租</title>
 <style>
-:root{--bg:#f2f2f7;--card:#fff;--ink:#000;--sub:#8e8e93;--line:#e5e5ea;--blue:#007aff;--red:#ff3b30;--green:#34c759;--amber:#ff9500;--fill:#e9e9ee;color-scheme:light dark}
-@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--ink:#fff;--sub:#98989f;--line:#38383a;--blue:#0a84ff;--red:#ff453a;--green:#30d158;--amber:#ff9f0a;--fill:#2c2c2e}}
+:root{--stage:#d8d8de;--bg:#f2f2f7;--card:#fff;--ink:#000;--sub:#8e8e93;--line:#d1d1d6;--blue:#007aff;--red:#ff3b30;--green:#34c759;--amber:#ff9500;--fill:#e9e9ee;--glass:rgba(249,249,249,.82);color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--stage:#0b0b0d;--bg:#000;--card:#1c1c1e;--ink:#fff;--sub:#98989f;--line:#38383a;--blue:#0a84ff;--red:#ff453a;--green:#30d158;--amber:#ff9f0a;--fill:#2c2c2e;--glass:rgba(29,29,31,.82)}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"SF Pro Text","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.wrap{max-width:720px;margin:auto;padding:0 16px 60px}
-.bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);padding:10px 0 8px}
-h1{font-size:34px;font-weight:800;letter-spacing:-.5px;margin:18px 0 2px}
-.sub{color:var(--sub);font-size:14px;margin-bottom:6px}
+html,body{height:100%}
+body{margin:0;background:var(--stage);color:var(--ink);font-family:-apple-system,"SF Pro Text","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center}
+/* iPhone 外框 */
+.phone{position:relative;width:390px;height:844px;max-height:96vh;background:var(--bg);border-radius:56px;box-shadow:0 0 0 11px #1a1a1c,0 0 0 13px #55555a,0 40px 90px rgba(0,0,0,.45);overflow:hidden;display:flex;flex-direction:column}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:122px;height:35px;background:#000;border-radius:20px;z-index:30}
+.status{flex:none;height:54px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 34px 8px 40px;font-weight:600;font-size:16px;z-index:20;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.status .r{display:flex;gap:6px;align-items:center}
+.batt{width:25px;height:12px;border:1.5px solid var(--sub);border-radius:4px;position:relative;padding:1px}
+.batt i{display:block;height:100%;width:78%;background:var(--ink);border-radius:1.5px}
+.batt::after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:4px;background:var(--sub);border-radius:0 1px 1px 0}
+.screen{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:20px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+h1{font-size:34px;font-weight:800;letter-spacing:-.5px;margin:6px 0 2px}
+.sub{color:var(--sub);font-size:14px;margin-bottom:8px}
+.bar{position:sticky;top:0;z-index:5;background:var(--glass);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);padding:8px 0;margin:0 -16px;padding-left:16px;padding-right:16px}
 .search{display:flex;align-items:center;gap:8px;background:var(--fill);border-radius:12px;padding:0 12px;height:38px}
-.search input{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-size:17px;outline:0}
+.search input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-size:17px;outline:0}
 .seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;margin-top:10px}
 .seg button{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-size:14px;font-weight:500;padding:6px 0;border-radius:7px;cursor:pointer;transition:.2s}
 .seg button.on{background:var(--card);box-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.04);font-weight:600}
@@ -22,15 +32,13 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.5px;margin:18px 0 2px}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:none;border:0;background:var(--fill);color:var(--ink);font:inherit;font-size:14px;padding:7px 14px;border-radius:99px;cursor:pointer;transition:.2s}
 .chip.on{background:var(--blue);color:#fff}
-.tools{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 8px;font-size:13px;color:var(--sub)}
-.tools label{display:flex;align-items:center;gap:6px}
-.sw{appearance:none;width:42px;height:26px;border-radius:99px;background:var(--fill);position:relative;transition:.25s;cursor:pointer;margin:0}
-.sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3);transition:.25s}
-.sw:checked{background:var(--green)}.sw:checked::after{left:18px}
-.card{background:var(--card);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);animation:up .45s both;transition:transform .15s}
+.count{margin:14px 4px 8px;font-size:13px;color:var(--sub)}
+.card{background:var(--card);border-radius:20px;padding:18px;margin-bottom:14px;animation:up .45s both;transition:transform .15s}
 .card:active{transform:scale(.985)}
+.card.upcoming{outline:2px dashed color-mix(in srgb,var(--amber) 55%,transparent);outline-offset:-2px}
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.top>div:first-child{min-width:0}
 .city{font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.5px}
 h3{margin:2px 0 0;font-size:20px;font-weight:700;letter-spacing:-.2px}
 .addr{color:var(--sub);font-size:13px;margin-top:3px}
@@ -39,12 +47,11 @@ h3{margin:2px 0 0;font-size:20px;font-weight:700;letter-spacing:-.2px}
 .badge span{font-size:11px;font-weight:600}
 .badge.ok{background:color-mix(in srgb,var(--blue) 12%,transparent);color:var(--blue)}
 .badge.soon{background:color-mix(in srgb,var(--amber) 15%,transparent);color:var(--amber)}
-.deadline.soon{color:var(--amber)}.deadline.soon .dot{background:var(--amber)}
-.card.upcoming{outline:2px dashed color-mix(in srgb,var(--amber) 55%,transparent);outline-offset:-2px}
 .badge.off{background:var(--fill);color:var(--sub)}
 .deadline{margin-top:12px;font-size:15px;font-weight:700;color:var(--red);display:flex;align-items:center;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
+.dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
 @keyframes pulse{50%{opacity:.25;transform:scale(1.5)}}
+.deadline.soon{color:var(--amber)}.deadline.soon .dot{background:var(--amber)}
 .deadline.off{color:var(--sub)}.deadline.off .dot{background:var(--sub);animation:none}
 .price{margin-top:10px;font-size:15px}.price b{font-size:28px;font-weight:800;letter-spacing:-.5px}
 .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
@@ -63,35 +70,63 @@ details{background:var(--card);border-radius:16px;padding:12px 16px;margin-top:8
 summary{color:var(--blue);cursor:pointer;font-size:15px}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .form input,.form select{border:0;background:var(--fill);color:var(--ink);font:inherit;font-size:15px;padding:10px;border-radius:10px;min-width:0}
+.form label{font-size:12px;color:var(--sub);min-width:0}
+.form label input{width:100%}
 .form button{grid-column:1/-1;border:0;background:var(--blue);color:#fff;font:inherit;font-weight:600;padding:11px;border-radius:12px}
+/* 底部分頁列 */
+.tabbar{flex:none;display:flex;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:.5px solid var(--line);padding:7px 0 24px;position:relative}
+.tab{flex:1;border:0;background:transparent;color:var(--sub);font:inherit;font-size:10px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;position:relative}
+.tab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab.on{color:var(--blue)}
+.tab em{position:absolute;top:-3px;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-style:normal;font-size:11px;font-weight:700;line-height:18px;padding:0 5px}
+.tab em.z{display:none}
+.home{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:var(--ink);opacity:.9}
+@media(max-width:600px){
+  body{display:block}
+  .phone{width:100%;height:100%;max-height:none;border-radius:0;box-shadow:none}
+  .island,.status,.home{display:none}
+  .tabbar{padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+  .screen{padding-top:12px}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>社宅招租</h1>
-  <div class="sub">台北市・新北市 政府辦理　<span id="today"></span></div>
-  <div class="bar">
-    <div class="search"><span>🔍</span><input id="q" placeholder="搜尋社宅、行政區、房型" type="search"></div>
-    <div class="seg" id="seg"></div>
-    <div class="chips" id="chips"></div>
+<div class="phone">
+  <div class="island"></div>
+  <div class="status"><span id="clock">9:41</span><span class="r"><span>5G</span><span class="batt"><i></i></span></span></div>
+  <div class="screen" id="screen">
+    <h1>社宅招租</h1>
+    <div class="sub">台北市・新北市 政府辦理</div>
+    <div class="bar">
+      <div class="search"><span>🔍</span><input id="q" placeholder="搜尋社宅、行政區、房型" type="search"></div>
+      <div class="seg" id="seg"></div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="count" id="count"></div>
+    <div id="list"></div>
+    <details><summary>＋ 新增一筆招租</summary>
+      <form class="form" id="addForm">
+        <input name="name" placeholder="社宅名稱*" required style="grid-column:1/-1">
+        <select name="city"><option>台北市</option><option>新北市</option></select>
+        <input name="dist" placeholder="行政區">
+        <input name="rooms" placeholder="房型 一房,二房">
+        <input name="minRent" type="number" placeholder="最低月租">
+        <input name="units" type="number" placeholder="戶數">
+        <span></span>
+        <label>開放日（選填，未來日期＝即將開放）<input name="start" type="date"></label>
+        <label>截止日<input name="end" type="date" required></label>
+        <input name="url" placeholder="官方公告網址" style="grid-column:1/-1">
+        <button>加入</button>
+      </form>
+    </details>
+    <div class="note">資料整理自官方公告與媒體彙整（2026/11），租金為定價，<br>實際以官方公告為準。狀態依今天日期自動更新。</div>
   </div>
-  <div class="tools"><span id="count"></span><label>顯示已截止 <input type="checkbox" class="sw" id="showClosed"></label></div>
-  <div id="list"></div>
-  <details><summary>＋ 新增一筆招租</summary>
-    <form class="form" id="addForm">
-      <input name="name" placeholder="社宅名稱*" required style="grid-column:1/-1">
-      <select name="city"><option>台北市</option><option>新北市</option></select>
-      <input name="dist" placeholder="行政區">
-      <input name="rooms" placeholder="房型 一房,二房">
-      <input name="minRent" type="number" placeholder="最低月租">
-      <input name="units" type="number" placeholder="戶數">
-      <label style="font-size:12px;color:var(--sub)">開放日（選填，未來日期＝即將開放）<input name="start" type="date" style="width:100%"></label>
-      <label style="font-size:12px;color:var(--sub)">截止日<input name="end" type="date" required style="width:100%"></label>
-      <input name="url" placeholder="官方公告網址" style="grid-column:1/-1">
-      <button>加入</button>
-    </form>
-  </details>
-  <div class="note">資料整理自官方公告與媒體彙整（2026/11），租金為定價，<br>實際以官方公告為準。狀態依今天日期自動更新。</div>
+  <nav class="tabbar" id="tabbar">
+    <button class="tab on" data-t="open"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/></svg>受理中<em id="n-open" class="z"></em></button>
+    <button class="tab" data-t="soon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>即將開放<em id="n-soon" class="z"></em></button>
+    <button class="tab" data-t="closed"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9M10 13h4"/></svg>已截止</button>
+    <div class="home"></div>
+  </nav>
 </div>
 
 <script>
@@ -112,8 +147,7 @@ const BASE=[
 {name:"林口世大運選手村社宅",city:"新北市",dist:"林口區",addr:"仁愛路二段・近機捷 A9 林口站（A/B/D 區）",rooms:["三房","四房"],units:null,minRent:13040,
  start:"2026-07-30",end:"2026-12-31",endText:"12/31（四）截止・隨到隨辦",draw:"審查通過後選屋簽約・洽 02-8979-1799",operator:"國家住都中心（中央社宅）",
  rent:[["A區四房 50~57坪","14,550~33,000"],["B區三房 45坪","13,090~26,360"],["D區三房 45~48坪","13,040~27,600"]],
- url:"https://pms.hurc.org.tw/",src:"https://applealmondrealty.com/posts/54649"}
-,
+ url:"https://pms.hurc.org.tw/",src:"https://applealmondrealty.com/posts/54649"},
 {name:"斯文、新興社宅 短租（4 戶）",city:"台北市",dist:"",addr:"限設籍台北市、年滿 18 歲・僅受理掛號郵寄",rooms:[],units:4,minRent:0,
  start:"2026-01-01",end:"2026-12-31",endText:"12/31（四）23:59 截止",draw:"短期租賃",operator:"臺北市住都中心",
  rent:[],url:"https://www.rent.gov.taipei/"}
@@ -123,11 +157,12 @@ const BASE=[
 const $=id=>document.getElementById(id);
 const store=()=>{try{return JSON.parse(localStorage.getItem("extra")||"[]")}catch(e){return[]}};
 const save=a=>{try{localStorage.setItem("extra",JSON.stringify(a))}catch(e){}};
-const pad=n=>String(n).padStart(2,"0"),now=new Date();
+const pad=n=>String(n).padStart(2,"0");
+const now=new Date();
 const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-$("today").textContent=todayStr.slice(5).replace("-","/");
+const tick=()=>{const d=new Date();$("clock").textContent=`${d.getHours()}:${pad(d.getMinutes())}`};tick();setInterval(tick,30000);
 const dayDiff=s=>Math.round((new Date(s+"T00:00:00")-new Date(todayStr+"T00:00:00"))/864e5);
-let city="",dist="",room="";
+let city="",dist="",room="",tab="open";
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const all=()=>BASE.concat(store());
 function seg(){["全部","台北市","新北市"].forEach((c,i)=>{const b=document.createElement("button");b.textContent=c;if(!i)b.className="on";
@@ -136,21 +171,26 @@ function chips(){const c=$("chips");c.innerHTML="";
   const mk=(t,on,f)=>{const b=document.createElement("button");b.className="chip"+(on?" on":"");b.textContent=t;b.onclick=f;c.appendChild(b)};
   [...new Set(all().filter(x=>!city||x.city===city).map(x=>x.dist).filter(Boolean))].forEach(d=>mk(d,dist===d,()=>{dist=dist===d?"":d;chips();render()}));
   ["一房","二房","三房","四房"].forEach(r=>mk(r,room===r,()=>{room=room===r?"":r;chips();render()}))}
-$("q").oninput=render;$("showClosed").onchange=render;
+$("q").oninput=render;
+[...document.querySelectorAll(".tab")].forEach(b=>b.onclick=()=>{tab=b.dataset.t;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));$("screen").scrollTop=0;render()});
 $("addForm").onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const x=store();
   x.push({name:f.name,city:f.city,dist:f.dist,rooms:f.rooms.split(/[,，、 ]+/).filter(Boolean),units:+f.units||null,minRent:+f.minRent||0,
   start:f.start||undefined,end:f.end,endText:f.end.slice(5).replace("-","/")+" 截止",url:f.url,rent:[],custom:true});save(x);e.target.reset();chips();render()};
 window.del=i=>{const x=store();x.splice(i,1);save(x);chips();render();return false};
 function render(){
   const q=$("q").value.trim().toLowerCase(),ex=store();
-  let r=all().map(d=>({...d,left:dayDiff(d.end),ex:d.custom?ex.findIndex(e=>e.name===d.name&&e.end===d.end):-1}))
+  const base=all().map(d=>({...d,left:dayDiff(d.end),ex:d.custom?ex.findIndex(e=>e.name===d.name&&e.end===d.end):-1}))
     .map(d=>({...d,soon:!!d.start&&d.start>todayStr,startLeft:d.start?dayDiff(d.start):0}))
     .map(d=>({...d,open:!d.soon&&d.left>=0}))
-    .filter(d=>(!city||d.city===city)&&(!dist||d.dist===dist)&&(!room||d.rooms.includes(room))&&($("showClosed").checked||d.open||d.soon)&&
-      (!q||(d.name+d.city+d.dist+d.addr+d.rooms.join()).toLowerCase().includes(q)))
-    .sort((a,b)=>(a.soon-b.soon)||(a.soon?a.start.localeCompare(b.start):a.end.localeCompare(b.end)));
-  const nOpen=r.filter(d=>d.open).length,nSoon=r.filter(d=>d.soon).length;
-  $("count").textContent=`${nOpen} 處受理中`+(nSoon?`・${nSoon} 處即將開放`:"")+(r.length-nOpen-nSoon?`・${r.length-nOpen-nSoon} 處已截止`:"");
+    .filter(d=>(!city||d.city===city)&&(!dist||d.dist===dist)&&(!room||d.rooms.includes(room))&&
+      (!q||(d.name+d.city+d.dist+d.addr+d.rooms.join()).toLowerCase().includes(q)));
+  const nOpen=base.filter(d=>d.open).length,nSoon=base.filter(d=>d.soon).length;
+  for(const[k,n]of[["open",nOpen],["soon",nSoon]]){const e=$("n-"+k);e.textContent=n;e.classList.toggle("z",!n)}
+  const r=base.filter(d=>tab==="open"?d.open:tab==="soon"?d.soon:(!d.open&&!d.soon))
+    .sort((a,b)=>tab==="soon"?a.start.localeCompare(b.start):a.end.localeCompare(b.end));
+  $("count").textContent={open:`${r.length} 處受理中，依截止日排序`,soon:`${r.length} 處即將開放`,closed:`${r.length} 處已截止`}[tab];
+  const none={open:"目前沒有受理中的社宅",soon:"目前沒有已公告、尚未開放的社宅<br>有新公告時會顯示在這裡",closed:"沒有已截止的社宅"}[tab];
   $("list").innerHTML=r.length?r.map((d,i)=>{
     const sd=d.start?d.start.slice(5).replace("-","/"):"";
     const badge=d.soon?`<div class="badge soon"><b>${d.startLeft}</b><span>天後開放</span></div>`:
@@ -167,7 +207,7 @@ function render(){
     <div class="info">${d.draw?esc(d.draw)+"<br>":""}${d.operator?"受理單位："+esc(d.operator):""}</div>
     <div class="btns">${d.url?`<a class="btn" href="${esc(d.url)}" target="_blank" rel="noopener">線上申請</a>`:""}
     ${d.src?`<a class="btn alt" href="${esc(d.src)}" target="_blank" rel="noopener">來源</a>`:""}
-    ${d.ex>=0?`<a class="btn alt" href="#" onclick="return del(${d.ex})">刪除</a>`:""}</div></div>`}).join(""):'<div class="empty">目前沒有符合的招租</div>';
+    ${d.ex>=0?`<a class="btn alt" href="#" onclick="return del(${d.ex})">刪除</a>`:""}</div></div>`}).join(""):`<div class="empty">${none}</div>`;
 }
 seg();chips();render();
 </script>
