@@ -52,6 +52,9 @@ h3{margin:2px 0 0;font-size:20px;font-weight:700;letter-spacing:-.2px}
 @keyframes pulse{50%{opacity:.25;transform:scale(1.5)}}
 .deadline.soon{color:var(--amber)}.deadline.soon .dot{background:var(--amber)}
 .deadline.off{color:var(--sub)}.deadline.off .dot{background:var(--sub);animation:none}
+.draw{margin-top:8px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.draw span{font-size:12px;font-weight:700;color:var(--blue);background:color-mix(in srgb,var(--blue) 16%,transparent);padding:2px 8px;border-radius:99px}
+.draw small{font-size:12px;font-weight:500;color:var(--sub)}
 .price{margin-top:10px;font-size:15px}.price b{font-size:28px;font-weight:800;letter-spacing:-.5px}
 .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
 .tag{font-size:12px;padding:3px 10px;border-radius:99px;background:var(--fill)}
@@ -121,7 +124,8 @@ body{display:block}
         <span></span>
         <label>開放日（選填，未來日期＝即將開放）<input name="start" type="date"></label>
         <label>截止日<input name="end" type="date" required></label>
-        <input name="url" placeholder="官方公告網址" style="grid-column:1/-1">
+        <label>抽籤日（選填）<input name="drawDate" type="date"></label>
+        <input name="url" placeholder="官方公告網址">
         <button>加入</button>
       </form>
     </details>
@@ -139,19 +143,19 @@ body{display:block}
 // 內建資料：新的招租加在這裡，或用頁面下方「新增」表單
 const BASE=[
 {name:"興隆社會住宅 I 區",city:"台北市",dist:"文山區",addr:"興隆路四段107巷",rooms:["一房","二房","三房"],units:471,minRent:15824,
- start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",draw:"11/27 公開抽籤・2027/3 後分批入住",operator:"臺北市住都中心",
+ start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",drawDate:"2026-11-27",drawText:"11/27（五）公開抽籤",draw:"2027/3 後分批入住",operator:"臺北市住都中心",
  rent:[["一房 16~18坪","15,824~17,760"],["二房 26~31坪","25,722~30,612"],["三房 34坪","33,684"]],
  url:"https://uni-one.thurc.org.taipei/",src:"https://applealmondrealty.com/posts/54640"},
 {name:"福國社會住宅",city:"台北市",dist:"北投區",addr:"福國路168、170號・近捷運芝山站",rooms:["一房","二房","三房"],units:341,minRent:18118,
- start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",draw:"11/27 公開抽籤・2027/3 後分批入住",operator:"臺北市住都中心",
+ start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",drawDate:"2026-11-27",drawText:"11/27（五）公開抽籤",draw:"2027/3 後分批入住",operator:"臺北市住都中心",
  rent:[["一房 19~20坪","18,118~19,037"],["二房 28~33坪","26,608~31,422"],["三房 37坪","35,217"]],
  url:"https://uni-one.thurc.org.taipei/",src:"https://applealmondrealty.com/posts/54640"},
 {name:"錦州社會住宅",city:"台北市",dist:"中山區",addr:"新生北路二段98、102號",rooms:["一房","二房"],units:342,minRent:16820,
- start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",draw:"11/27 公開抽籤・2027/4 後分批入住",operator:"臺北市住都中心",
+ start:"2026-10-30",end:"2026-11-13",endText:"11/13（五）17:00 截止",drawDate:"2026-11-27",drawText:"11/27（五）公開抽籤",draw:"2027/4 後分批入住",operator:"臺北市住都中心",
  rent:[["一房 16~18坪","16,820~18,841"],["二房 27~29坪","28,393~30,435"]],
  url:"https://uni-one.thurc.org.taipei/",src:"https://applealmondrealty.com/posts/54640"},
 {name:"林口世大運選手村社宅",city:"新北市",dist:"林口區",addr:"仁愛路二段・近機捷 A9 林口站（A/B/D 區）",rooms:["三房","四房"],units:null,minRent:13040,
- start:"2026-07-30",end:"2026-12-31",endText:"12/31（四）截止・隨到隨辦",draw:"審查通過後選屋簽約・洽 02-8979-1799",operator:"國家住都中心（中央社宅）",
+ start:"2026-07-30",end:"2026-12-31",endText:"12/31（四）截止・隨到隨辦",drawText:"不抽籤，隨到隨辦",draw:"審查通過後選屋簽約・洽 02-8979-1799",operator:"國家住都中心（中央社宅）",
  rent:[["A區四房 50~57坪","14,550~33,000"],["B區三房 45坪","13,090~26,360"],["D區三房 45~48坪","13,040~27,600"]],
  url:"https://pms.hurc.org.tw/",src:"https://applealmondrealty.com/posts/54649"},
 {name:"斯文、新興社宅 短租（4 戶）",city:"台北市",dist:"",addr:"限設籍台北市、年滿 18 歲・僅受理掛號郵寄",rooms:[],units:4,minRent:0,
@@ -182,7 +186,7 @@ $("q").oninput=render;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));$("screen").scrollTop=0;render()});
 $("addForm").onsubmit=e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const x=store();
   x.push({name:f.name,city:f.city,dist:f.dist,rooms:f.rooms.split(/[,，、 ]+/).filter(Boolean),units:+f.units||null,minRent:+f.minRent||0,
-  start:f.start||undefined,end:f.end,endText:f.end.slice(5).replace("-","/")+" 截止",url:f.url,rent:[],custom:true});save(x);e.target.reset();chips();render()};
+  start:f.start||undefined,drawDate:f.drawDate||undefined,drawText:f.drawDate?f.drawDate.slice(5).replace("-","/")+" 抽籤":undefined,end:f.end,endText:f.end.slice(5).replace("-","/")+" 截止",url:f.url,rent:[],custom:true});save(x);e.target.reset();chips();render()};
 window.del=i=>{const x=store();x.splice(i,1);save(x);chips();render();return false};
 function render(){
   const q=$("q").value.trim().toLowerCase(),ex=store();
@@ -207,6 +211,7 @@ function render(){
     <h3>${esc(d.name)}</h3>${d.addr?`<div class="addr">${esc(d.addr)}</div>`:""}</div>${badge}</div>
     ${d.soon?`<div class="deadline soon"><i class="dot"></i>即將開放：${sd} 起受理・${esc(d.endText)}</div>`:
     `<div class="deadline ${d.open?"":"off"}"><i class="dot"></i>${d.open?"截止：":"已截止："}${esc(d.endText)}</div>`}
+    ${d.drawText?`<div class="draw"><span>🎲 抽籤</span>${esc(d.drawText)}${d.drawDate&&dayDiff(d.drawDate)>=0?`<small>${dayDiff(d.drawDate)?dayDiff(d.drawDate)+" 天後":"今天"}</small>`:""}</div>`:""}
     ${d.minRent?`<div class="price"><b>${d.minRent.toLocaleString()}</b> 元／月起</div>`:""}
     <div class="tags">${d.rooms.map(x=>`<span class="tag">${esc(x)}</span>`).join("")}${d.units?`<span class="tag">${d.units} 戶</span>`:""}</div>
     ${d.rent&&d.rent.length?`<table><tr><th>房型</th><th>月租（元）</th></tr>${d.rent.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join("")}</table>`:""}
