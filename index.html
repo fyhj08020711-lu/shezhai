@@ -169,7 +169,16 @@ const BASE=[
  rent:[],src:"https://www.moi.gov.tw/News_Content.aspx?n=2&s=340279"},
 {name:"鶯陶安居（中央社宅）",city:"新北市",dist:"鶯歌區",addr:"近捷運三鶯線・鶯歌老街・新北美術館",rooms:[],units:null,minRent:0,
  start:"2026-08-14",end:"2026-09-14",endText:"9/14（一）截止",drawDate:"2026-12-16",drawText:"12/16（三）公開抽籤",draw:"最快 2027/3/1 起入住",operator:"國家住都中心（中央社宅第 3 季）",
- rent:[],src:"https://applealmondrealty.com/posts/51457"}
+ rent:[],src:"https://applealmondrealty.com/posts/51457"},
+{name:"光環安居（中央社宅）",city:"新北市",dist:"板橋區",addr:"",rooms:["套房","二房","三房"],units:330,minRent:0,
+ start:"2026-11-30",end:"2026-12-29",endText:"12/29（二）23:59 截止",drawDate:"2027-01-12",drawText:"1/12（二）公開抽籤・先抽後審",draw:"最快 2027/6/1 起入住・11/30 上午 9:00 起受理",operator:"國家住都中心（中央社宅第 4 季）",
+ rent:[],url:"https://www.socialhousing.tw",src:"https://www.cna.com.tw/news/aipl/202611190114.aspx"},
+{name:"莒光安居（中央社宅）",city:"新北市",dist:"中和區",addr:"",rooms:["套房","二房","三房"],units:296,minRent:0,
+ start:"2026-11-30",end:"2026-12-29",endText:"12/29（二）23:59 截止",drawDate:"2027-01-12",drawText:"1/12（二）公開抽籤・先抽後審",draw:"最快 2027/6/1 起入住・11/30 上午 9:00 起受理",operator:"國家住都中心（中央社宅第 4 季）",
+ rent:[],url:"https://www.socialhousing.tw",src:"https://www.cna.com.tw/news/aipl/202611190114.aspx"},
+{name:"貴和安居A（中央社宅）",city:"新北市",dist:"泰山區",addr:"",rooms:["套房","二房","三房"],units:560,minRent:0,
+ start:"2026-11-30",end:"2026-12-29",endText:"12/29（二）23:59 截止",drawDate:"2027-01-12",drawText:"1/12（二）公開抽籤・先抽後審",draw:"最快 2027/6/1 起入住・11/30 上午 9:00 起受理",operator:"國家住都中心（中央社宅第 4 季）",
+ rent:[],url:"https://www.socialhousing.tw",src:"https://www.cna.com.tw/news/aipl/202611190114.aspx"}
 // 即將開放的案子：start 設成未來日期（YYYY-MM-DD），頁面會自動標成「即將開放」，到期後自動變成「受理中」
 // 例：{name:"某某社宅",city:"新北市",dist:"板橋區",rooms:["一房"],start:"2027-01-15",end:"2027-02-14",endText:"2/14 截止",url:"..."}
 ];
@@ -189,7 +198,7 @@ function seg(){["全部","台北市","新北市"].forEach((c,i)=>{const b=docume
 function chips(){const c=$("chips");c.innerHTML="";
   const mk=(t,on,f)=>{const b=document.createElement("button");b.className="chip"+(on?" on":"");b.textContent=t;b.onclick=f;c.appendChild(b)};
   [...new Set(all().filter(x=>!city||x.city===city).map(x=>x.dist).filter(Boolean))].forEach(d=>mk(d,dist===d,()=>{dist=dist===d?"":d;chips();render()}));
-  ["一房","二房","三房","四房"].forEach(r=>mk(r,room===r,()=>{room=room===r?"":r;chips();render()}))}
+  ["套房","一房","二房","三房","四房"].forEach(r=>mk(r,room===r,()=>{room=room===r?"":r;chips();render()}))}
 $("q").oninput=render;
 [...document.querySelectorAll(".tab")].forEach(b=>b.onclick=()=>{tab=b.dataset.t;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));$("screen").scrollTop=0;render()});
